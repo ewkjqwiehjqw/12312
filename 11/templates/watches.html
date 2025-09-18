@@ -1,0 +1,431 @@
+{% extends "base.html" %}
+
+{% block title %}Luxury Watches - Custom Timepieces{% endblock %}
+
+{% block stylesheets %}
+{{ super() }}
+<link rel="stylesheet" href="/static/css/styles.css">
+<style>
+.watches-container {
+    min-height: 100vh;
+    background: var(--bg-primary);
+    padding: 2rem;
+}
+
+.watches-header {
+    text-align: center;
+    color: var(--text-primary);
+    margin-bottom: 3rem;
+}
+
+.watches-header h1 {
+    font-size: 2.5rem;
+    margin-bottom: 1rem;
+    font-weight: 700;
+    color: var(--text-primary);
+}
+
+.watches-header p {
+    font-size: 1.1rem;
+    color: var(--text-secondary);
+    margin-bottom: 0;
+}
+
+.watches-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+    gap: 2rem;
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+.watch-card {
+    background: var(--bg-secondary);
+    border: 1px solid var(--border-color);
+    border-radius: var(--border-radius-lg);
+    padding: 2rem;
+    transition: all var(--transition-medium);
+    text-align: center;
+}
+
+.watch-card:hover {
+    transform: translateY(-5px);
+    border-color: var(--accent-gold);
+    box-shadow: 0 10px 30px rgba(212, 175, 55, 0.1);
+}
+
+.watch-icon {
+    width: 80px;
+    height: 80px;
+    background: var(--accent-gold);
+    border-radius: 50%;
+    margin: 0 auto 1.5rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 2rem;
+    color: var(--bg-primary);
+}
+
+.watch-card h3 {
+    color: var(--text-primary);
+    margin-bottom: 1rem;
+    font-size: 1.5rem;
+    font-weight: 600;
+}
+
+.watch-card p {
+    color: var(--text-secondary);
+    margin-bottom: 1.5rem;
+    line-height: 1.6;
+}
+
+.watch-specs {
+    background: var(--bg-tertiary);
+    padding: 1.5rem;
+    border-radius: var(--border-radius-md);
+    margin-bottom: 1.5rem;
+    border: 1px solid var(--border-color);
+}
+
+.watch-specs h4 {
+    color: var(--text-primary);
+    margin-bottom: 1rem;
+    font-size: 1.1rem;
+    font-weight: 600;
+}
+
+.spec-item {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 0.75rem;
+    font-size: 0.9rem;
+}
+
+.spec-item:last-child {
+    margin-bottom: 0;
+}
+
+.spec-label {
+    color: var(--text-secondary);
+}
+
+.spec-value {
+    color: var(--text-primary);
+    font-weight: 600;
+}
+
+.price-tag {
+    font-size: 1.5rem;
+    color: var(--accent-gold);
+    font-weight: bold;
+    margin-bottom: 1.5rem;
+}
+
+.customize-button {
+    background: var(--accent-gold);
+    color: var(--bg-primary);
+    border: none;
+    padding: 12px 30px;
+    border-radius: var(--border-radius-md);
+    font-weight: 600;
+    cursor: pointer;
+    transition: all var(--transition-medium);
+    text-decoration: none;
+    display: inline-block;
+    width: 100%;
+    font-size: 1rem;
+}
+
+.customize-button:hover {
+    background: var(--accent-secondary);
+    transform: translateY(-2px);
+    color: var(--bg-primary);
+    text-decoration: none;
+}
+
+.back-to-dashboard {
+    position: fixed;
+    top: 100px;
+    left: 2rem;
+    background: var(--bg-secondary);
+    border: 1px solid var(--border-color);
+    color: var(--text-primary);
+    padding: 12px 20px;
+    border-radius: var(--border-radius-md);
+    text-decoration: none;
+    font-weight: 600;
+    transition: all var(--transition-medium);
+    z-index: 1000;
+}
+
+.back-to-dashboard:hover {
+    background: var(--bg-tertiary);
+    border-color: var(--accent-gold);
+    color: var(--text-primary);
+    text-decoration: none;
+}
+
+@media (max-width: 768px) {
+    .watches-container {
+        padding: 1rem;
+    }
+    
+    .watches-header h1 {
+        font-size: 2rem;
+    }
+    
+    .watches-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .back-to-dashboard {
+        position: relative;
+        top: auto;
+        left: auto;
+        margin-bottom: 2rem;
+        display: inline-block;
+    }
+}
+</style>
+{% endblock %}
+
+{% block content %}
+<a href="/dashboard" class="back-to-dashboard">
+    <i class="fas fa-arrow-left"></i> Back to Dashboard
+</a>
+
+<div class="watches-container">
+    <div class="watches-header">
+        <h1>Luxury Watches Collection</h1>
+        <p>Premium timepieces crafted with precision and style</p>
+    </div>
+    
+    <div class="watches-grid">
+        <div class="watch-card">
+            <div class="watch-icon">
+                <i class="fas fa-crown"></i>
+            </div>
+            <h3>Royal Gold</h3>
+            <p>Luxurious 18K gold watch with diamond accents and Swiss movement. Perfect for special occasions.</p>
+            <div class="watch-specs">
+                <h4>Specifications</h4>
+                <div class="spec-item">
+                    <span class="spec-label">Material:</span>
+                    <span class="spec-value">18K Gold</span>
+                </div>
+                <div class="spec-item">
+                    <span class="spec-label">Movement:</span>
+                    <span class="spec-value">Swiss Automatic</span>
+                </div>
+                <div class="spec-item">
+                    <span class="spec-label">Water Resistance:</span>
+                    <span class="spec-value">50M</span>
+                </div>
+                <div class="spec-item">
+                    <span class="spec-label">Warranty:</span>
+                    <span class="spec-value">2 Years</span>
+                </div>
+            </div>
+            <div class="price-tag">$2,999</div>
+            <a href="#" class="customize-button">
+                <i class="fas fa-cog"></i> Customize Watch
+            </a>
+        </div>
+        
+        <div class="watch-card">
+            <div class="watch-icon">
+                <i class="fas fa-gem"></i>
+            </div>
+            <h3>Platinum Elite</h3>
+            <p>Elegant platinum watch with diamond bezel and premium leather strap. Timeless sophistication.</p>
+            <div class="watch-specs">
+                <h4>Specifications</h4>
+                <div class="spec-item">
+                    <span class="spec-label">Material:</span>
+                    <span class="spec-value">Platinum</span>
+                </div>
+                <div class="spec-item">
+                    <span class="spec-label">Movement:</span>
+                    <span class="spec-value">Swiss Quartz</span>
+                </div>
+                <div class="spec-item">
+                    <span class="spec-label">Water Resistance:</span>
+                    <span class="spec-value">100M</span>
+                </div>
+                <div class="spec-item">
+                    <span class="spec-label">Warranty:</span>
+                    <span class="spec-value">3 Years</span>
+                </div>
+            </div>
+            <div class="price-tag">$4,999</div>
+            <a href="#" class="customize-button">
+                <i class="fas fa-cog"></i> Customize Watch
+            </a>
+        </div>
+        
+        <div class="watch-card">
+            <div class="watch-icon">
+                <i class="fas fa-shield-alt"></i>
+            </div>
+            <h3>Sport Titanium</h3>
+            <p>Durable titanium sports watch with ceramic bezel and sapphire crystal. Built for active lifestyles.</p>
+            <div class="watch-specs">
+                <h4>Specifications</h4>
+                <div class="spec-item">
+                    <span class="spec-label">Material:</span>
+                    <span class="spec-value">Titanium</span>
+                </div>
+                <div class="spec-item">
+                    <span class="spec-label">Movement:</span>
+                    <span class="spec-value">Chronograph</span>
+                </div>
+                <div class="spec-item">
+                    <span class="spec-label">Water Resistance:</span>
+                    <span class="spec-value">200M</span>
+                </div>
+                <div class="spec-item">
+                    <span class="spec-label">Warranty:</span>
+                    <span class="spec-value">5 Years</span>
+                </div>
+            </div>
+            <div class="price-tag">$1,999</div>
+            <a href="#" class="customize-button">
+                <i class="fas fa-cog"></i> Customize Watch
+            </a>
+        </div>
+        
+        <div class="watch-card">
+            <div class="watch-icon">
+                <i class="fas fa-heart"></i>
+            </div>
+            <h3>Rose Gold Romance</h3>
+            <p>Delicate rose gold watch with mother-of-pearl dial and diamond hour markers. Feminine elegance.</p>
+            <div class="watch-specs">
+                <h4>Specifications</h4>
+                <div class="spec-item">
+                    <span class="spec-label">Material:</span>
+                    <span class="spec-value">Rose Gold</span>
+                </div>
+                <div class="spec-item">
+                    <span class="spec-label">Movement:</span>
+                    <span class="spec-value">Swiss Quartz</span>
+                </div>
+                <div class="spec-item">
+                    <span class="spec-label">Water Resistance:</span>
+                    <span class="spec-value">30M</span>
+                </div>
+                <div class="spec-item">
+                    <span class="spec-label">Warranty:</span>
+                    <span class="spec-value">2 Years</span>
+                </div>
+            </div>
+            <div class="price-tag">$2,499</div>
+            <a href="#" class="customize-button">
+                <i class="fas fa-cog"></i> Customize Watch
+            </a>
+        </div>
+        
+        <div class="watch-card">
+            <div class="watch-icon">
+                <i class="fas fa-star"></i>
+            </div>
+            <h3>Diamond Luxury</h3>
+            <p>Exquisite diamond-encrusted watch with white gold case and alligator leather strap. Ultimate luxury.</p>
+            <div class="watch-specs">
+                <h4>Specifications</h4>
+                <div class="spec-item">
+                    <span class="spec-label">Material:</span>
+                    <span class="spec-value">White Gold</span>
+                </div>
+                <div class="spec-item">
+                    <span class="spec-label">Movement:</span>
+                    <span class="spec-value">Swiss Automatic</span>
+                </div>
+                <div class="spec-item">
+                    <span class="spec-label">Water Resistance:</span>
+                    <span class="spec-value">50M</span>
+                </div>
+                <div class="spec-item">
+                    <span class="spec-label">Warranty:</span>
+                    <span class="spec-value">5 Years</span>
+                </div>
+            </div>
+            <div class="price-tag">$7,999</div>
+            <a href="#" class="customize-button">
+                <i class="fas fa-cog"></i> Customize Watch
+            </a>
+        </div>
+        
+        <div class="watch-card">
+            <div class="watch-icon">
+                <i class="fas fa-leaf"></i>
+            </div>
+            <h3>Eco Classic</h3>
+            <p>Sustainable luxury watch made from recycled materials with solar movement. Eco-friendly elegance.</p>
+            <div class="watch-specs">
+                <h4>Specifications</h4>
+                <div class="spec-item">
+                    <span class="spec-label">Material:</span>
+                    <span class="spec-value">Recycled Steel</span>
+                </div>
+                <div class="spec-item">
+                    <span class="spec-label">Movement:</span>
+                    <span class="spec-value">Solar Powered</span>
+                </div>
+                <div class="spec-item">
+                    <span class="spec-label">Water Resistance:</span>
+                    <span class="spec-value">100M</span>
+                </div>
+                <div class="spec-item">
+                    <span class="spec-label">Warranty:</span>
+                    <span class="spec-value">3 Years</span>
+                </div>
+            </div>
+            <div class="price-tag">$1,299</div>
+            <a href="#" class="customize-button">
+                <i class="fas fa-cog"></i> Customize Watch
+            </a>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+// Initialize auth header if token exists
+const token = localStorage.getItem('authToken');
+if (token) {
+    axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
+}
+
+// Add functionality to customize buttons
+document.querySelectorAll('.customize-button').forEach(button => {
+    button.addEventListener('click', function(e) {
+        e.preventDefault();
+        
+        // Get watch details from the card
+        const watchCard = this.closest('.watch-card');
+        const watchName = watchCard.querySelector('h3').textContent;
+        const priceText = watchCard.querySelector('.price-tag').textContent;
+        const price = parseFloat(priceText.replace('$', '').replace(',', ''));
+        
+        // Get material from specs
+        const materialSpec = watchCard.querySelector('.spec-item .spec-value');
+        const material = materialSpec ? materialSpec.textContent : 'Unknown';
+        
+        // Build checkout URL with product data
+        const checkoutUrl = `/checkout?` + new URLSearchParams({
+            type: 'watch',
+            name: watchName,
+            price: price,
+            material: material,
+            icon: 'fas fa-clock'
+        }).toString();
+        
+        // Redirect to checkout
+        window.location.href = checkoutUrl;
+    });
+});
+</script>
+{% endblock %} 
