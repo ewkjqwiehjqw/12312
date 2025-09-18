@@ -1,0 +1,385 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>User Management - Admin - Grillz Studio</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        gold: {
+                            50: '#fefdf6',
+                            100: '#fdf9e8',
+                            200: '#f9f0c4',
+                            300: '#f4e39f',
+                            400: '#eace56',
+                            500: '#d4af37',
+                            600: '#b4941f',
+                            700: '#967a18',
+                            800: '#7a611a',
+                            900: '#66511c',
+                        },
+                        dark: {
+                            50: '#f8fafc',
+                            100: '#f1f5f9',
+                            200: '#e2e8f0',
+                            300: '#cbd5e1',
+                            400: '#94a3b8',
+                            500: '#64748b',
+                            600: '#475569',
+                            700: '#334155',
+                            800: '#1e293b',
+                            900: '#0f172a',
+                            950: '#020617',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+<body class="bg-gradient-to-br from-dark-950 via-dark-900 to-dark-800 text-white min-h-screen">
+    <!-- Mobile Menu Overlay -->
+    <div id="mobileOverlay" class="fixed inset-0 bg-black/50 backdrop-blur-sm z-40 lg:hidden hidden"></div>
+    
+    <!-- Mobile Menu Button -->
+    <button id="mobileMenuBtn" class="fixed top-4 left-4 z-50 lg:hidden bg-gold-500 text-dark-900 p-3 rounded-xl shadow-lg hover:bg-gold-400 transition-all duration-200">
+        <i class="fas fa-bars text-lg"></i>
+    </button>
+
+    <!-- Sidebar -->
+    <aside id="sidebar" class="fixed left-0 top-0 h-full w-72 bg-dark-800/80 backdrop-blur-xl border-r border-dark-700/50 z-50 transform -translate-x-full lg:translate-x-0 transition-transform duration-300 ease-in-out">
+        <!-- Logo -->
+        <div class="p-6 border-b border-dark-700/50">
+            <div class="flex items-center space-x-3">
+                <div class="w-12 h-12 bg-gradient-to-r from-gold-500 to-gold-400 rounded-xl flex items-center justify-center shadow-lg">
+                    <i class="fas fa-gem text-dark-900 text-xl"></i>
+                </div>
+                <div>
+                    <h1 class="text-xl font-bold text-white">Grillz Studio</h1>
+                    <span class="text-xs bg-gold-500 text-dark-900 px-2 py-1 rounded-full font-semibold">ADMIN</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Navigation -->
+        <nav class="p-4 space-y-2">
+            <a href="/admin" class="flex items-center space-x-3 px-4 py-3 rounded-xl text-gray-300 hover:bg-dark-700/50 hover:text-white transition-all duration-200 group">
+                <i class="fas fa-chart-line w-5 text-center"></i>
+                <span class="font-medium">Dashboard</span>
+            </a>
+            <a href="/admin/orders" class="flex items-center space-x-3 px-4 py-3 rounded-xl text-gray-300 hover:bg-dark-700/50 hover:text-white transition-all duration-200 group">
+                <i class="fas fa-shopping-bag w-5 text-center"></i>
+                <span class="font-medium">Orders</span>
+            </a>
+            <a href="/admin/users" class="flex items-center space-x-3 px-4 py-3 rounded-xl bg-gold-500/10 text-gold-400 border border-gold-500/20 group">
+                <i class="fas fa-users w-5 text-center"></i>
+                <span class="font-medium">Users</span>
+            </a>
+            <div class="pt-4 mt-4 border-t border-dark-700/50">
+                <a href="/orders" class="flex items-center space-x-3 px-4 py-3 rounded-xl text-gray-400 hover:bg-dark-700/50 hover:text-gray-300 transition-all duration-200 group">
+                    <i class="fas fa-arrow-left w-5 text-center"></i>
+                    <span class="font-medium">Back to Site</span>
+                </a>
+            </div>
+        </nav>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="lg:ml-72 min-h-screen">
+        <div class="p-6 lg:p-8">
+            <!-- Header -->
+            <div class="mb-8">
+                <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
+                    <div>
+                        <h1 class="text-3xl font-bold text-white mb-2">User Management</h1>
+                        <p class="text-gray-400">Manage registered users and admin permissions</p>
+                    </div>
+                    <button onclick="loadUsers()" class="bg-gold-500 hover:bg-gold-600 text-dark-900 px-4 py-2 rounded-xl font-semibold transition-all duration-200 flex items-center space-x-2 w-fit">
+                        <i class="fas fa-refresh"></i>
+                        <span>Refresh</span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Users Container -->
+            <div class="bg-dark-800/60 backdrop-blur-sm rounded-2xl border border-dark-700/50 overflow-hidden">
+                <div class="p-6 border-b border-dark-700/50">
+                    <div class="flex items-center space-x-3">
+                        <div class="w-8 h-8 bg-green-500/20 rounded-lg flex items-center justify-center">
+                            <i class="fas fa-users text-green-400"></i>
+                        </div>
+                        <h2 class="text-xl font-bold text-white">All Users</h2>
+                    </div>
+                </div>
+                
+                <div id="usersContent" class="min-h-96">
+                    <!-- Loading State -->
+                    <div class="flex justify-center items-center py-20">
+                        <div class="flex items-center space-x-3">
+                            <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-gold-500"></div>
+                            <span class="text-gray-400">Loading users...</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Admin Toggle Modal -->
+    <div id="adminModal" class="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 hidden">
+        <div class="flex items-center justify-center min-h-screen p-4">
+            <div class="bg-dark-800 rounded-2xl border border-dark-700 p-6 w-full max-w-md">
+                <div class="flex items-center justify-between mb-6">
+                    <h3 class="text-xl font-bold text-white">Toggle Admin Access</h3>
+                    <button onclick="closeAdminModal()" class="text-gray-400 hover:text-white">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+                
+                <div class="mb-6">
+                    <p class="text-gray-300 mb-4">
+                        Are you sure you want to <span id="modalAction" class="text-gold-400 font-semibold">grant</span> admin access to 
+                        <strong id="modalUserName" class="text-white"></strong>?
+                    </p>
+                    <div class="bg-yellow-500/10 border border-yellow-500/30 rounded-xl p-4">
+                        <div class="flex items-start space-x-3">
+                            <i class="fas fa-exclamation-triangle text-yellow-400 mt-1"></i>
+                            <div class="text-sm text-yellow-300">
+                                Admin users can access all admin functions including user management.
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="flex space-x-3">
+                    <button onclick="closeAdminModal()" class="flex-1 bg-dark-700 hover:bg-dark-600 text-gray-300 px-4 py-2 rounded-xl font-medium transition-all duration-200">
+                        Cancel
+                    </button>
+                    <button onclick="confirmToggleAdmin()" class="flex-1 bg-gold-500 hover:bg-gold-600 text-dark-900 px-4 py-2 rounded-xl font-semibold transition-all duration-200">
+                        <span id="modalConfirmText">Grant Access</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let currentUsers = [];
+        let currentUserId = null;
+
+        // Mobile menu functionality
+        const mobileMenuBtn = document.getElementById('mobileMenuBtn');
+        const sidebar = document.getElementById('sidebar');
+        const mobileOverlay = document.getElementById('mobileOverlay');
+
+        function toggleMobileMenu() {
+            sidebar.classList.toggle('-translate-x-full');
+            mobileOverlay.classList.toggle('hidden');
+        }
+
+        mobileMenuBtn.addEventListener('click', toggleMobileMenu);
+        mobileOverlay.addEventListener('click', toggleMobileMenu);
+
+        async function loadUsers() {
+            try {
+                const response = await fetch('/admin/api/users', {
+                    credentials: 'include'
+                });
+                
+                if (response.status === 401) {
+                    window.location.href = '/auth/login';
+                    return;
+                }
+                
+                const users = await response.json();
+                currentUsers = users;
+                renderUsers(users);
+            } catch (error) {
+                console.error('Error loading users:', error);
+                document.getElementById('usersContent').innerHTML = `
+                    <div class="flex flex-col items-center justify-center py-20">
+                        <i class="fas fa-exclamation-triangle text-red-400 text-4xl mb-4"></i>
+                        <p class="text-red-400 text-lg">Error loading users</p>
+                    </div>
+                `;
+            }
+        }
+
+        function renderUsers(users) {
+            const content = document.getElementById('usersContent');
+            
+            if (users.length === 0) {
+                content.innerHTML = `
+                    <div class="flex flex-col items-center justify-center py-20">
+                        <i class="fas fa-users text-gray-500 text-4xl mb-4"></i>
+                        <p class="text-gray-400 text-lg">No users found</p>
+                    </div>
+                `;
+                return;
+            }
+
+            // Desktop Table View
+            const desktopTable = `
+                <div class="hidden lg:block">
+                    <table class="w-full">
+                        <thead class="border-b border-dark-700/50">
+                            <tr class="text-left">
+                                <th class="px-6 py-4 text-sm font-semibold text-gray-300">User</th>
+                                <th class="px-6 py-4 text-sm font-semibold text-gray-300">Joined</th>
+                                <th class="px-6 py-4 text-sm font-semibold text-gray-300">Orders</th>
+                                <th class="px-6 py-4 text-sm font-semibold text-gray-300">Spent</th>
+                                <th class="px-6 py-4 text-sm font-semibold text-gray-300">Status</th>
+                                <th class="px-6 py-4 text-sm font-semibold text-gray-300">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-dark-700/30">
+                            ${users.map(user => `
+                                <tr class="hover:bg-dark-700/20 transition-colors">
+                                    <td class="px-6 py-4">
+                                        <div class="flex items-center space-x-3">
+                                            <div class="w-10 h-10 bg-gradient-to-r from-gold-500 to-gold-400 rounded-xl flex items-center justify-center">
+                                                <i class="fas fa-user text-dark-900"></i>
+                                            </div>
+                                            <div>
+                                                <div class="text-white font-medium">${user.full_name}</div>
+                                                <div class="text-sm text-gray-400">${user.email}</div>
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td class="px-6 py-4">
+                                        <div class="text-gray-400">${new Date(user.created_at).toLocaleDateString()}</div>
+                                    </td>
+                                    <td class="px-6 py-4">
+                                        <span class="inline-flex items-center px-2.5 py-1 rounded-full text-sm font-medium bg-blue-500/20 text-blue-400">
+                                            ${user.total_orders}
+                                        </span>
+                                    </td>
+                                    <td class="px-6 py-4">
+                                        <div class="text-white font-semibold">$${user.total_spent.toFixed(2)}</div>
+                                    </td>
+                                    <td class="px-6 py-4">
+                                        ${getUserStatusBadge(user.is_admin)}
+                                    </td>
+                                    <td class="px-6 py-4">
+                                        <button onclick="openAdminModal(${user.id}, '${user.full_name}', ${user.is_admin})" 
+                                                class="bg-dark-700 hover:bg-gold-500/20 text-gray-300 hover:text-gold-400 px-3 py-2 rounded-lg text-sm font-medium transition-all duration-200 flex items-center space-x-2">
+                                            <i class="fas fa-user-cog"></i>
+                                            <span>${user.is_admin ? 'Remove Admin' : 'Make Admin'}</span>
+                                        </button>
+                                    </td>
+                                </tr>
+                            `).join('')}
+                        </tbody>
+                    </table>
+                </div>
+            `;
+
+            // Mobile Card View
+            const mobileCards = `
+                <div class="lg:hidden p-4 space-y-4">
+                    ${users.map(user => `
+                        <div class="bg-dark-700/30 rounded-xl border border-dark-600/30 p-4">
+                            <div class="flex items-start space-x-3 mb-4">
+                                <div class="w-12 h-12 bg-gradient-to-r from-gold-500 to-gold-400 rounded-xl flex items-center justify-center">
+                                    <i class="fas fa-user text-dark-900"></i>
+                                </div>
+                                <div class="flex-1">
+                                    <div class="flex justify-between items-start mb-1">
+                                        <div class="text-white font-medium">${user.full_name}</div>
+                                        ${getUserStatusBadge(user.is_admin)}
+                                    </div>
+                                    <div class="text-sm text-gray-400">${user.email}</div>
+                                </div>
+                            </div>
+                            
+                            <div class="grid grid-cols-3 gap-4 mb-4 text-sm">
+                                <div>
+                                    <div class="text-gray-400">Joined</div>
+                                    <div class="text-white">${new Date(user.created_at).toLocaleDateString()}</div>
+                                </div>
+                                <div>
+                                    <div class="text-gray-400">Orders</div>
+                                    <div class="text-blue-400 font-semibold">${user.total_orders}</div>
+                                </div>
+                                <div>
+                                    <div class="text-gray-400">Spent</div>
+                                    <div class="text-white font-semibold">$${user.total_spent.toFixed(2)}</div>
+                                </div>
+                            </div>
+                            
+                            <button onclick="openAdminModal(${user.id}, '${user.full_name}', ${user.is_admin})" 
+                                    class="w-full bg-gold-500 hover:bg-gold-600 text-dark-900 px-3 py-2 rounded-lg text-sm font-semibold transition-all duration-200">
+                                <i class="fas fa-user-cog mr-2"></i>${user.is_admin ? 'Remove Admin' : 'Make Admin'}
+                            </button>
+                        </div>
+                    `).join('')}
+                </div>
+            `;
+
+            content.innerHTML = desktopTable + mobileCards;
+        }
+
+        function getUserStatusBadge(isAdmin) {
+            if (isAdmin) {
+                return '<span class="inline-flex items-center px-2.5 py-1 rounded-full text-sm font-medium bg-green-500/20 text-green-400 border border-green-500/30">Admin</span>';
+            } else {
+                return '<span class="inline-flex items-center px-2.5 py-1 rounded-full text-sm font-medium bg-gray-500/20 text-gray-400 border border-gray-500/30">User</span>';
+            }
+        }
+
+        function openAdminModal(userId, userName, isAdmin) {
+            currentUserId = userId;
+            
+            const action = isAdmin ? 'revoke' : 'grant';
+            const confirmText = isAdmin ? 'Remove Access' : 'Grant Access';
+            
+            document.getElementById('modalAction').textContent = action;
+            document.getElementById('modalUserName').textContent = userName;
+            document.getElementById('modalConfirmText').textContent = confirmText;
+            document.getElementById('adminModal').classList.remove('hidden');
+        }
+
+        function closeAdminModal() {
+            document.getElementById('adminModal').classList.add('hidden');
+            currentUserId = null;
+        }
+
+        async function confirmToggleAdmin() {
+            if (!currentUserId) return;
+            
+            try {
+                const response = await fetch(`/admin/api/users/${currentUserId}/toggle-admin`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    credentials: 'include'
+                });
+                
+                if (response.ok) {
+                    closeAdminModal();
+                    await loadUsers(); // Reload the users list
+                } else {
+                    const error = await response.json();
+                    alert(`Error: ${error.detail}`);
+                }
+            } catch (error) {
+                console.error('Error toggling admin status:', error);
+                alert('Error updating user status');
+            }
+            
+            currentUserId = null;
+        }
+
+        // Load users on page load
+        document.addEventListener('DOMContentLoaded', () => {
+            loadUsers();
+        });
+    </script>
+</body>
+</html>

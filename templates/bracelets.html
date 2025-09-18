@@ -1,0 +1,493 @@
+{% extends "base.html" %}
+
+{% block title %}Premium Bracelets - Luxury Accessories{% endblock %}
+
+{% block stylesheets %}
+{{ super() }}
+<link rel="stylesheet" href="/static/css/styles.css">
+<style>
+.bracelets-container {
+    min-height: 100vh;
+    background: var(--bg-primary);
+    padding: 2rem;
+}
+
+.bracelets-header {
+    text-align: center;
+    color: var(--text-primary);
+    margin-bottom: 3rem;
+}
+
+.bracelets-header h1 {
+    font-size: 2.5rem;
+    margin-bottom: 1rem;
+    font-weight: 700;
+    color: var(--text-primary);
+}
+
+.bracelets-header p {
+    font-size: 1.1rem;
+    color: var(--text-secondary);
+    margin-bottom: 0;
+}
+
+.bracelets-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+    gap: 2rem;
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+.bracelet-card {
+    background: var(--bg-secondary);
+    border: 1px solid var(--border-color);
+    border-radius: var(--border-radius-lg);
+    padding: 2rem;
+    transition: all var(--transition-medium);
+    text-align: center;
+}
+
+.bracelet-card:hover {
+    transform: translateY(-5px);
+    border-color: var(--accent-gold);
+    box-shadow: 0 10px 30px rgba(212, 175, 55, 0.1);
+}
+
+.bracelet-icon {
+    width: 80px;
+    height: 80px;
+    background: var(--accent-gold);
+    border-radius: 50%;
+    margin: 0 auto 1.5rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 2rem;
+    color: var(--bg-primary);
+}
+
+.bracelet-card h3 {
+    color: var(--text-primary);
+    margin-bottom: 1rem;
+    font-size: 1.5rem;
+    font-weight: 600;
+}
+
+.bracelet-card p {
+    color: var(--text-secondary);
+    margin-bottom: 1.5rem;
+    line-height: 1.6;
+}
+
+.bracelet-specs {
+    background: var(--bg-tertiary);
+    padding: 1.5rem;
+    border-radius: var(--border-radius-md);
+    margin-bottom: 1.5rem;
+    border: 1px solid var(--border-color);
+}
+
+.bracelet-specs h4 {
+    color: var(--text-primary);
+    margin-bottom: 1rem;
+    font-size: 1.1rem;
+    font-weight: 600;
+}
+
+.spec-item {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 0.75rem;
+    font-size: 0.9rem;
+}
+
+.spec-item:last-child {
+    margin-bottom: 0;
+}
+
+.spec-label {
+    color: var(--text-secondary);
+}
+
+.spec-value {
+    color: var(--text-primary);
+    font-weight: 600;
+}
+
+.price-tag {
+    font-size: 1.5rem;
+    color: var(--accent-gold);
+    font-weight: bold;
+    margin-bottom: 1.5rem;
+}
+
+.customize-button {
+    background: var(--accent-gold);
+    color: var(--bg-primary);
+    border: none;
+    padding: 12px 30px;
+    border-radius: var(--border-radius-md);
+    font-weight: 600;
+    cursor: pointer;
+    transition: all var(--transition-medium);
+    text-decoration: none;
+    display: inline-block;
+    width: 100%;
+    font-size: 1rem;
+}
+
+.customize-button:hover {
+    background: var(--accent-secondary);
+    transform: translateY(-2px);
+    color: var(--bg-primary);
+    text-decoration: none;
+}
+
+.back-to-dashboard {
+    position: fixed;
+    top: 100px;
+    left: 2rem;
+    background: var(--bg-secondary);
+    border: 1px solid var(--border-color);
+    color: var(--text-primary);
+    padding: 12px 20px;
+    border-radius: var(--border-radius-md);
+    text-decoration: none;
+    font-weight: 600;
+    transition: all var(--transition-medium);
+    z-index: 1000;
+}
+
+.back-to-dashboard:hover {
+    background: var(--bg-tertiary);
+    border-color: var(--accent-gold);
+    color: var(--text-primary);
+    text-decoration: none;
+}
+
+@media (max-width: 768px) {
+    .bracelets-container {
+        padding: 1rem;
+    }
+    
+    .bracelets-header h1 {
+        font-size: 2rem;
+    }
+    
+    .bracelets-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .back-to-dashboard {
+        position: relative;
+        top: auto;
+        left: auto;
+        margin-bottom: 2rem;
+        display: inline-block;
+    }
+}
+</style>
+{% endblock %}
+
+{% block content %}
+<a href="/dashboard" class="back-to-dashboard">
+    <i class="fas fa-arrow-left"></i> Back to Dashboard
+</a>
+
+<div class="bracelets-container">
+    <div class="bracelets-header">
+        <h1>Premium Bracelets Collection</h1>
+        <p>Elegant accessories crafted with precision and style</p>
+    </div>
+    
+    <div class="bracelets-grid">
+        <div class="bracelet-card">
+            <div class="bracelet-icon">
+                <i class="fas fa-ring"></i>
+            </div>
+            <h3>Golden Chain</h3>
+            <p>Classic 18K gold chain bracelet with premium clasp. Timeless elegance for any occasion.</p>
+            <div class="bracelet-specs">
+                <h4>Specifications</h4>
+                <div class="spec-item">
+                    <span class="spec-label">Material:</span>
+                    <span class="spec-value">18K Gold</span>
+                </div>
+                <div class="spec-item">
+                    <span class="spec-label">Length:</span>
+                    <span class="spec-value">7.5 inches</span>
+                </div>
+                <div class="spec-item">
+                    <span class="spec-label">Width:</span>
+                    <span class="spec-value">8mm</span>
+                </div>
+                <div class="spec-item">
+                    <span class="spec-label">Weight:</span>
+                    <span class="spec-value">25g</span>
+                </div>
+            </div>
+            <div class="price-tag">$899</div>
+            <a href="#" class="customize-button">
+                <i class="fas fa-cog"></i> Customize Bracelet
+            </a>
+        </div>
+        
+        <div class="bracelet-card">
+            <div class="bracelet-icon">
+                <i class="fas fa-gem"></i>
+            </div>
+            <h3>Diamond Tennis</h3>
+            <p>Stunning diamond tennis bracelet with platinum setting. Perfect for special occasions.</p>
+            <div class="bracelet-specs">
+                <h4>Specifications</h4>
+                <div class="spec-item">
+                    <span class="spec-label">Material:</span>
+                    <span class="spec-value">Platinum</span>
+                </div>
+                <div class="spec-item">
+                    <span class="spec-label">Length:</span>
+                    <span class="spec-value">7 inches</span>
+                </div>
+                <div class="spec-item">
+                    <span class="spec-label">Diamonds:</span>
+                    <span class="spec-value">2.5 carats</span>
+                </div>
+                <div class="spec-item">
+                    <span class="spec-label">Weight:</span>
+                    <span class="spec-value">18g</span>
+                </div>
+            </div>
+            <div class="price-tag">$3,999</div>
+            <a href="#" class="customize-button">
+                <i class="fas fa-cog"></i> Customize Bracelet
+            </a>
+        </div>
+        
+        <div class="bracelet-card">
+            <div class="bracelet-icon">
+                <i class="fas fa-link"></i>
+            </div>
+            <h3>Titanium Sport</h3>
+            <p>Lightweight titanium bracelet with modern design. Perfect for active lifestyles.</p>
+            <div class="bracelet-specs">
+                <h4>Specifications</h4>
+                <div class="spec-item">
+                    <span class="spec-label">Material:</span>
+                    <span class="spec-value">Titanium</span>
+                </div>
+                <div class="spec-item">
+                    <span class="spec-label">Length:</span>
+                    <span class="spec-value">8 inches</span>
+                </div>
+                <div class="spec-item">
+                    <span class="spec-label">Width:</span>
+                    <span class="spec-value">10mm</span>
+                </div>
+                <div class="spec-item">
+                    <span class="spec-label">Weight:</span>
+                    <span class="spec-value">12g</span>
+                </div>
+            </div>
+            <div class="price-tag">$299</div>
+            <a href="#" class="customize-button">
+                <i class="fas fa-cog"></i> Customize Bracelet
+            </a>
+        </div>
+        
+        <div class="bracelet-card">
+            <div class="bracelet-icon">
+                <i class="fas fa-heart"></i>
+            </div>
+            <h3>Rose Gold Charm</h3>
+            <p>Delicate rose gold charm bracelet with customizable pendants. Express your personality.</p>
+            <div class="bracelet-specs">
+                <h4>Specifications</h4>
+                <div class="spec-item">
+                    <span class="spec-label">Material:</span>
+                    <span class="spec-value">Rose Gold</span>
+                </div>
+                <div class="spec-item">
+                    <span class="spec-label">Length:</span>
+                    <span class="spec-value">7.5 inches</span>
+                </div>
+                <div class="spec-item">
+                    <span class="spec-label">Charms:</span>
+                    <span class="spec-value">5 included</span>
+                </div>
+                <div class="spec-item">
+                    <span class="spec-label">Weight:</span>
+                    <span class="spec-value">15g</span>
+                </div>
+            </div>
+            <div class="price-tag">$699</div>
+            <a href="#" class="customize-button">
+                <i class="fas fa-cog"></i> Customize Bracelet
+            </a>
+        </div>
+        
+        <div class="bracelet-card">
+            <div class="bracelet-icon">
+                <i class="fas fa-star"></i>
+            </div>
+            <h3>Luxury Bangle</h3>
+            <p>Exquisite diamond-encrusted bangle with white gold. Statement piece for special events.</p>
+            <div class="bracelet-specs">
+                <h4>Specifications</h4>
+                <div class="spec-item">
+                    <span class="spec-label">Material:</span>
+                    <span class="spec-value">White Gold</span>
+                </div>
+                <div class="spec-item">
+                    <span class="spec-label">Diameter:</span>
+                    <span class="spec-value">2.5 inches</span>
+                </div>
+                <div class="spec-item">
+                    <span class="spec-label">Diamonds:</span>
+                    <span class="spec-value">1.2 carats</span>
+                </div>
+                <div class="spec-item">
+                    <span class="spec-label">Weight:</span>
+                    <span class="spec-value">22g</span>
+                </div>
+            </div>
+            <div class="price-tag">$2,299</div>
+            <a href="#" class="customize-button">
+                <i class="fas fa-cog"></i> Customize Bracelet
+            </a>
+        </div>
+        
+        <div class="bracelet-card">
+            <div class="bracelet-icon">
+                <i class="fas fa-leaf"></i>
+            </div>
+            <h3>Eco Pearl</h3>
+            <p>Sustainable pearl bracelet with recycled silver. Eco-friendly luxury with natural elegance.</p>
+            <div class="bracelet-specs">
+                <h4>Specifications</h4>
+                <div class="spec-item">
+                    <span class="spec-label">Material:</span>
+                    <span class="spec-value">Recycled Silver</span>
+                </div>
+                <div class="spec-item">
+                    <span class="spec-label">Length:</span>
+                    <span class="spec-value">7 inches</span>
+                </div>
+                <div class="spec-item">
+                    <span class="spec-label">Pearls:</span>
+                    <span class="spec-value">Fresh Water</span>
+                </div>
+                <div class="spec-item">
+                    <span class="spec-label">Weight:</span>
+                    <span class="spec-value">14g</span>
+                </div>
+            </div>
+            <div class="price-tag">$199</div>
+            <a href="#" class="customize-button">
+                <i class="fas fa-cog"></i> Customize Bracelet
+            </a>
+        </div>
+        
+        <div class="bracelet-card">
+            <div class="bracelet-icon">
+                <i class="fas fa-anchor"></i>
+            </div>
+            <h3>Nautical Rope</h3>
+            <p>Maritime-inspired rope bracelet with sterling silver accents. Perfect for casual elegance.</p>
+            <div class="bracelet-specs">
+                <h4>Specifications</h4>
+                <div class="spec-item">
+                    <span class="spec-label">Material:</span>
+                    <span class="spec-value">Sterling Silver</span>
+                </div>
+                <div class="spec-item">
+                    <span class="spec-label">Length:</span>
+                    <span class="spec-value">8 inches</span>
+                </div>
+                <div class="spec-item">
+                    <span class="spec-label">Cord:</span>
+                    <span class="spec-value">Marine Grade</span>
+                </div>
+                <div class="spec-item">
+                    <span class="spec-label">Weight:</span>
+                    <span class="spec-value">8g</span>
+                </div>
+            </div>
+            <div class="price-tag">$149</div>
+            <a href="#" class="customize-button">
+                <i class="fas fa-cog"></i> Customize Bracelet
+            </a>
+        </div>
+        
+        <div class="bracelet-card">
+            <div class="bracelet-icon">
+                <i class="fas fa-fire"></i>
+            </div>
+            <h3>Copper Healing</h3>
+            <p>Therapeutic copper bracelet with magnetic elements. Wellness meets style in perfect harmony.</p>
+            <div class="bracelet-specs">
+                <h4>Specifications</h4>
+                <div class="spec-item">
+                    <span class="spec-label">Material:</span>
+                    <span class="spec-value">Pure Copper</span>
+                </div>
+                <div class="spec-item">
+                    <span class="spec-label">Length:</span>
+                    <span class="spec-value">7.5 inches</span>
+                </div>
+                <div class="spec-item">
+                    <span class="spec-label">Magnets:</span>
+                    <span class="spec-value">6 Neodymium</span>
+                </div>
+                <div class="spec-item">
+                    <span class="spec-label">Weight:</span>
+                    <span class="spec-value">20g</span>
+                </div>
+            </div>
+            <div class="price-tag">$99</div>
+            <a href="#" class="customize-button">
+                <i class="fas fa-cog"></i> Customize Bracelet
+            </a>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+// Initialize auth header if token exists
+const token = localStorage.getItem('authToken');
+if (token) {
+    axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
+}
+
+// Add functionality to customize buttons
+document.querySelectorAll('.customize-button').forEach(button => {
+    button.addEventListener('click', function(e) {
+        e.preventDefault();
+        
+        // Get bracelet details from the card
+        const braceletCard = this.closest('.bracelet-card');
+        const braceletName = braceletCard.querySelector('h3').textContent;
+        const priceText = braceletCard.querySelector('.price-tag').textContent;
+        const price = parseFloat(priceText.replace('$', '').replace(',', ''));
+        
+        // Get material from specs
+        const materialSpec = braceletCard.querySelector('.spec-item .spec-value');
+        const material = materialSpec ? materialSpec.textContent : 'Unknown';
+        
+        // Build checkout URL with product data
+        const checkoutUrl = `/checkout?` + new URLSearchParams({
+            type: 'bracelet',
+            name: braceletName,
+            price: price,
+            material: material,
+            icon: 'fas fa-link'
+        }).toString();
+        
+        // Redirect to checkout
+        window.location.href = checkoutUrl;
+    });
+});
+</script>
+{% endblock %} 

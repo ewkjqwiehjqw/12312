@@ -1,0 +1,1423 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta http-equiv="X-Content-Type-Options" content="nosniff" />
+  <meta http-equiv="X-XSS-Protection" content="1; mode=block" />
+  <meta name="referrer" content="strict-origin-when-cross-origin" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <title>Studio - Grillz Studio</title>
+
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" />
+  
+  <!-- Added axios CDN to fix undefined error -->
+  <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+</head>
+
+<style>
+    :root {
+    --bg-primary: #0a0a0a;
+    --bg-secondary: #1a1a1a;
+    --bg-tertiary: #2a2a2a;
+    --border-color: rgba(255, 255, 255, 0.1);
+    --border-hover-color: rgba(255, 255, 255, 0.2);
+    --text-primary: #ffffff;
+    --text-secondary: #a0a0a0;
+    --text-tertiary: #707070;
+    --accent-primary: #d4af37; /* Luxury gold accent */
+    --accent-secondary: #f4d03f;
+    --accent-gold: #d4af37;
+    --accent-silver: #C0C0C0;
+    --accent-platinum: #E5E4E2;
+    --accent-diamond: #f4d03f;
+
+    --font-family: 'Inter', sans-serif;
+    --border-radius-sm: 4px;
+    --border-radius-md: 8px;
+    --border-radius-lg: 12px;
+    --shadow-sm: 0 2px 4px rgba(0, 0, 0, 0.1);
+    --shadow-md: 0 4px 8px rgba(0, 0, 0, 0.2);
+    --transition-fast: 0.2s ease-in-out;
+    --transition-medium: 0.3s ease-in-out;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: var(--font-family);
+    background-color: var(--bg-primary);
+    color: var(--text-primary);
+    min-height: 100vh;
+    overflow-x: hidden;
+    line-height: 1.6;
+}
+
+/* Loading Screen */
+.loading-screen {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: var(--bg-primary);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 9999;
+    transition: opacity 0.5s ease var(--transition-medium);
+}
+.loading-content { text-align: center; }
+
+/* Replaced basic spinner with luxury multi-ring spinner */
+.loading-spinner {
+    position: relative;
+    width: 80px;
+    height: 80px;
+    margin: 0 auto 2rem;
+}
+
+.spinner-ring {
+    position: absolute;
+    border-radius: 50%;
+    border: 2px solid transparent;
+}
+
+.spinner-ring:nth-child(1) {
+    width: 80px;
+    height: 80px;
+    border-top: 2px solid var(--accent-primary);
+    border-right: 2px solid var(--accent-primary);
+    animation: luxurySpinOuter 4s linear infinite;
+}
+
+.spinner-ring:nth-child(2) {
+    width: 60px;
+    height: 60px;
+    top: 10px;
+    left: 10px;
+    border-bottom: 2px solid var(--accent-secondary);
+    border-left: 2px solid var(--accent-secondary);
+    animation: luxurySpinMiddle 4s linear infinite reverse;
+}
+
+.spinner-ring:nth-child(3) {
+    width: 40px;
+    height: 40px;
+    top: 20px;
+    left: 20px;
+    border-top: 2px solid var(--accent-gold);
+    border-right: 2px solid var(--accent-gold);
+    animation: luxurySpinInner 4s ease-in-out infinite;
+}
+
+.spinner-center {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 16px;
+    height: 16px;
+    background: radial-gradient(circle, var(--accent-primary), var(--accent-secondary));
+    border-radius: 50%;
+    animation: luxuryPulse 4s ease-in-out infinite;
+    box-shadow: 0 0 20px rgba(212, 175, 55, 0.5);
+}
+
+@keyframes luxurySpinOuter {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+@keyframes luxurySpinMiddle {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(-360deg); }
+}
+
+@keyframes luxurySpinInner {
+    0% { transform: rotate(0deg); }
+    50% { transform: rotate(180deg) scale(1.1); }
+    100% { transform: rotate(360deg); }
+}
+
+@keyframes luxuryPulse {
+    0%, 100% { 
+        transform: translate(-50%, -50%) scale(1);
+        box-shadow: 0 0 20px rgba(212, 175, 55, 0.5);
+    }
+    50% { 
+        transform: translate(-50%, -50%) scale(1.2);
+        box-shadow: 0 0 30px rgba(212, 175, 55, 0.8);
+    }
+}
+
+.loading-content h3 { 
+    font-size: 1.5rem; 
+    margin-bottom: 0.5rem; 
+    color: var(--text-primary);
+    font-weight: 600;
+}
+.loading-content p { 
+    color: var(--text-secondary);
+    font-size: 0.9rem;
+}
+
+/* Navigation */
+.navbar {
+    position: sticky;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 1000;
+    background: rgba(10, 10, 10, 0.8);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border-bottom: 1px solid var(--border-color);
+    padding: 0.75rem 0;
+}
+.nav-container {
+    max-width: 1400px;
+    margin: 0 auto;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 2rem;
+}
+.logo { display: flex; align-items: center; gap: 0.5rem; color: var(--text-primary); }
+.logo-icon { font-size: 1.5rem; color: var(--accent-primary); }
+.logo-text { font-size: 1.25rem; font-weight: 700; }
+
+/* Added dashboard button styling */
+.dashboard-btn {
+    background: rgba(26, 26, 26, 0.7);
+    border: 1px solid var(--border-color);
+    color: var(--text-primary);
+    padding: 0.5rem 1rem;
+    border-radius: var(--border-radius-sm);
+    text-decoration: none;
+    font-weight: 500;
+    font-size: 0.9rem;
+    transition: all var(--transition-fast);
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+.dashboard-btn:hover {
+    background: rgba(50, 50, 50, 0.9);
+    border-color: var(--border-hover-color);
+    transform: translateY(-1px);
+}
+
+.nav-links { display: flex; align-items: center; gap: 1.5rem; }
+.nav-link {
+    color: var(--text-secondary);
+    text-decoration: none;
+    font-weight: 500;
+    transition: color var(--transition-fast);
+    padding: 0.5rem 0;
+    position: relative;
+}
+.nav-link:hover, .nav-link.active { color: var(--text-primary); }
+.nav-link.active::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 2px;
+    background: var(--accent-primary);
+    border-radius: 1px;
+}
+.cta-button {
+    background: linear-gradient(135deg, var(--accent-primary), var(--accent-secondary));
+    color: var(--bg-primary);
+    border: none;
+    padding: 0.6rem 1.2rem;
+    border-radius: 8px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+.cta-button:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(212, 175, 55, 0.3);
+}
+
+/* Auth Buttons */
+.auth-button {
+    padding: 0.5rem 1rem;
+    border-radius: 8px;
+    font-weight: 600;
+    font-size: 0.9rem;
+    cursor: pointer;
+    transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+    border: 1px solid var(--border-color);
+}
+
+.signin-btn {
+    background: transparent;
+    color: var(--text-primary);
+    border-color: var(--border-color);
+}
+
+.signin-btn:hover {
+    background: rgba(255, 255, 255, 0.05);
+    border-color: var(--accent-primary);
+}
+
+.signup-btn {
+    background: linear-gradient(135deg, var(--accent-primary), var(--accent-secondary));
+    color: var(--bg-primary);
+    border-color: var(--accent-primary);
+}
+
+.signup-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(212, 175, 55, 0.3);
+}
+.mobile-menu-toggle { display: none; background: none; border: none; color: var(--text-primary); font-size: 1.5rem; cursor: pointer; }
+
+/* Main Container */
+.main-container {
+    display: grid;
+    grid-template-columns: 1fr 420px; /* Adjusted sidebar width */
+    gap: 2rem;
+    max-width: 1400px;
+    margin: 2rem auto;
+    padding: 0 2rem;
+    align-items: start;
+}
+
+/* Viewer Section */
+.viewer-section { display: flex; flex-direction: column; gap: 1.5rem; }
+.viewer-header { text-align: left; margin-bottom: 0.5rem; }
+.viewer-header h1 { font-size: 2rem; font-weight: 700; margin-bottom: 0.25rem; color: var(--text-primary); }
+.viewer-header p { font-size: 1rem; color: var(--text-secondary); }
+
+.viewer-wrapper {
+    position: relative;
+    background: rgba(26, 26, 26, 0.7);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border: 1px solid var(--border-color);
+    border-radius: 16px;
+    overflow: hidden;
+    aspect-ratio: 16 / 10; /* Maintain aspect ratio */
+    min-height: 400px; /* Minimum height */
+}
+.viewer-container { width: 100%; height: 100%; }
+#threejs-canvas { width: 100%; height: 100%; display: block; }
+.viewer-controls {
+    position: absolute;
+    top: 1rem;
+    right: 1rem;
+    display: flex;
+    gap: 0.5rem;
+}
+.control-btn {
+    background: rgba(30, 30, 30, 0.7);
+    border: 1px solid var(--border-color);
+    color: var(--text-primary);
+    width: 40px;
+    height: 40px;
+    border-radius: var(--border-radius-sm);
+    cursor: pointer;
+    transition: all var(--transition-fast);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1rem;
+}
+.control-btn:hover { background: rgba(50, 50, 50, 0.9); border-color: var(--border-hover-color); }
+.control-btn.active { 
+    background: var(--accent-primary); 
+    color: #fff; 
+    border-color: var(--accent-primary); 
+}
+.control-btn.active:hover { 
+    background: var(--accent-secondary); 
+    border-color: var(--accent-secondary); 
+}
+.control-btn i { pointer-events: none; }
+
+
+/* Progress Indicator */
+.progress-indicator {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 1rem;
+    background: rgba(26, 26, 26, 0.7);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border: 1px solid var(--border-color);
+    border-radius: 12px;
+}
+.progress-step { display: flex; flex-direction: column; align-items: center; text-align: center; color: var(--text-tertiary); transition: color var(--transition-medium); }
+.progress-step.active { color: var(--text-primary); }
+.progress-step.active .step-dot { background-color: var(--accent-primary); box-shadow: 0 0 0 3px rgba(212, 175, 55, 0.3); }
+.step-dot {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    background-color: var(--border-color);
+    margin-bottom: 0.5rem;
+    transition: all var(--transition-medium);
+}
+.step-label { font-size: 0.8rem; font-weight: 500; }
+.progress-line {
+    flex-grow: 1;
+    height: 2px;
+    background-color: var(--border-color);
+    margin: 0 1rem;
+    margin-bottom: calc(0.5rem + 12px); /* Align with text */
+}
+
+
+/* Customization Panel */
+.customization-panel {
+    background: rgba(26, 26, 26, 0.7);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border: 1px solid var(--border-color);
+    border-radius: 16px;
+    padding: 1rem;
+    height: fit-content;
+    max-height: calc(100vh - 8rem);
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    margin-top: 118px;
+}
+.panel-header { margin-bottom: 1rem; text-align: left; }
+.panel-header h2 { font-size: 1.3rem; font-weight: 700; margin-bottom: 0.2rem; }
+.panel-header p { color: var(--text-secondary); font-size: 0.85rem; }
+
+.customization-section {
+    margin-bottom: 1rem;
+    padding-bottom: 1rem;
+    border-bottom: 1px solid var(--border-color);
+}
+.customization-section:last-child { border-bottom: none; margin-bottom: 0; }
+.customization-section h3 {
+    font-size: 1rem;
+    font-weight: 600;
+    margin-bottom: 0.75rem;
+    color: var(--text-primary);
+}
+
+/* Material Grid */
+.material-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 0.5rem; }
+.material-option {
+    background-color: var(--bg-tertiary);
+    border: 2px solid transparent;
+    border-radius: var(--border-radius-md);
+    padding: 0.5rem;
+    cursor: pointer;
+    transition: all var(--transition-fast);
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.2rem;
+}
+.material-option:hover { border-color: var(--border-hover-color); background-color: #383838; }
+.material-option.active { border-color: var(--accent-primary); background-color: rgba(212, 175, 55, 0.1); }
+.material-preview-wrapper { display: flex; justify-content: center; align-items: center; margin-bottom: 0.25rem; }
+.material-preview {
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    box-shadow: inset 0 1px 2px rgba(0,0,0,0.2);
+}
+.material-preview.gold { background: var(--accent-gold); }
+.material-preview.silver { background: var(--accent-silver); }
+.material-preview.platinum { background: var(--accent-platinum); }
+.material-preview.diamond {
+    background: radial-gradient(circle, #fff 20%, var(--accent-diamond) 100%);
+    border: 1px solid #fff;
+}
+.material-name { font-size: 0.9rem; font-weight: 500; }
+.price-tag { font-size: 0.8rem; color: var(--text-secondary); }
+.material-option.active .price-tag { color: var(--accent-primary); }
+
+
+/* Style Options */
+.style-options { display: grid; grid-template-columns: repeat(2, 1fr); gap: 0.5rem; }
+.style-btn {
+    background-color: var(--bg-tertiary);
+    border: 1px solid var(--border-color);
+    color: var(--text-primary);
+    padding: 0.6rem 0.5rem;
+    border-radius: var(--border-radius-sm);
+    cursor: pointer;
+    transition: all var(--transition-fast);
+    font-weight: 500;
+    font-size: 0.9rem;
+}
+.style-btn:hover { border-color: var(--border-hover-color); background-color: #383838; }
+.style-btn.active { 
+    background: linear-gradient(135deg, var(--accent-primary), var(--accent-secondary)); 
+    color: var(--bg-primary); 
+    border-color: var(--accent-primary); 
+}
+
+/* Color Picker */
+.color-picker { display: flex; flex-direction: column; gap: 0.75rem; }
+#colorPicker {
+    width: 100%;
+    height: 40px;
+    border: 1px solid var(--border-color);
+    border-radius: var(--border-radius-sm);
+    cursor: pointer;
+    background-color: var(--bg-tertiary);
+    padding: 0.25rem;
+}
+/* Basic styling for webkit color picker */
+#colorPicker::-webkit-color-swatch-wrapper { padding: 0; }
+#colorPicker::-webkit-color-swatch { border: none; border-radius: calc(var(--border-radius-sm) - 2px); }
+
+.color-presets { display: flex; gap: 0.5rem; flex-wrap: wrap; }
+.color-preset {
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    cursor: pointer;
+    border: 2px solid transparent;
+    transition: all var(--transition-fast);
+    outline: none;
+}
+.color-preset:hover, .color-preset:focus { border-color: var(--text-primary); transform: scale(1.1); }
+
+
+/* Teeth Selector */
+.teeth-selector { background-color: var(--bg-primary); border-radius: var(--border-radius-md); padding: 0.75rem; margin-bottom: 0.5rem; }
+.teeth-row { display: flex; justify-content: center; gap: 0.25rem; margin-bottom: 0.25rem; }
+.teeth-row:last-child { margin-bottom: 0; }
+.tooth {
+    width: 28px;
+    height: 28px;
+    background-color: var(--bg-tertiary);
+    border: 1px solid var(--border-color);
+    border-radius: var(--border-radius-sm);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all var(--transition-fast);
+    font-size: 0.7rem;
+    font-weight: 600;
+}
+.tooth:hover { border-color: var(--border-hover-color); background-color: #383838; }
+.tooth.selected { 
+    background: linear-gradient(135deg, var(--accent-primary), var(--accent-secondary)); 
+    color: var(--bg-primary); 
+    border-color: var(--accent-primary); 
+}
+
+.teeth-controls { display: flex; gap: 0.25rem; }
+.teeth-btn {
+    flex: 1;
+    background-color: var(--bg-tertiary);
+    border: 1px solid var(--border-color);
+    color: var(--text-primary);
+    padding: 0.4rem;
+    border-radius: var(--border-radius-sm);
+    cursor: pointer;
+    transition: all var(--transition-fast);
+    font-size: 0.75rem;
+}
+.teeth-btn:hover { border-color: var(--border-hover-color); background-color: #383838; }
+
+/* Advanced Controls */
+.advanced-controls { display: flex; flex-direction: column; gap: 1rem; }
+.control-group { display: flex; flex-direction: column; gap: 0.3rem; }
+.control-group label { font-weight: 500; color: var(--text-secondary); font-size: 0.9rem; }
+.control-group input[type="range"] {
+    width: 100%;
+    -webkit-appearance: none;
+    appearance: none;
+    height: 8px;
+    background: var(--bg-tertiary);
+    border-radius: 4px;
+    outline: none;
+    border: 1px solid var(--border-color);
+}
+.control-group input[type="range"]::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 18px;
+    height: 18px;
+    background: var(--accent-primary);
+    border-radius: 50%;
+    cursor: pointer;
+    border: 2px solid var(--bg-secondary);
+    transition: background-color var(--transition-fast);
+}
+.control-group input[type="range"]::-moz-range-thumb {
+    width: 18px;
+    height: 18px;
+    background: var(--accent-primary);
+    border-radius: 50%;
+    cursor: pointer;
+    border: 2px solid var(--bg-secondary);
+    transition: background-color var(--transition-fast);
+}
+.control-group input[type="range"]:hover::-webkit-slider-thumb { background-color: var(--accent-secondary); }
+.control-group input[type="range"]:hover::-moz-range-thumb { background-color: var(--accent-secondary); }
+.control-group .value {
+    text-align: right;
+    font-weight: 500;
+    color: var(--text-primary);
+    font-size: 0.85rem;
+    margin-top: -1.5rem; /* Position next to label */
+}
+
+/* Summary Section */
+.summary-section { border-bottom: none; }
+.summary-details p {
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.85rem;
+    color: var(--text-secondary);
+    margin-bottom: 0.2rem;
+}
+.summary-details p span { color: var(--text-primary); font-weight: 500; }
+.total-price-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 1.1rem;
+    font-weight: 700;
+    margin-top: 0.75rem;
+    padding-top: 0.75rem;
+    border-top: 1px solid var(--border-color);
+}
+.total-price-value { color: var(--accent-primary); }
+
+
+/* Step System */
+.step-content {
+    display: block;
+}
+
+.step-content[style*="display: none"] {
+    display: none !important;
+}
+
+/* Form Elements */
+.form-group {
+    margin-bottom: 0.75rem;
+}
+
+.form-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0.5rem;
+}
+
+.form-group label {
+    display: block;
+    font-size: 0.85rem;
+    font-weight: 500;
+    color: var(--text-secondary);
+    margin-bottom: 0.25rem;
+}
+
+.form-input {
+    width: 100%;
+    padding: 0.5rem;
+    background-color: var(--bg-tertiary);
+    border: 1px solid var(--border-color);
+    border-radius: var(--border-radius-sm);
+    color: var(--text-primary);
+    font-size: 0.85rem;
+    transition: border-color var(--transition-fast);
+}
+
+.form-input:focus {
+    outline: none;
+    border-color: var(--accent-primary);
+}
+
+.form-input::placeholder {
+    color: var(--text-tertiary);
+}
+
+/* Payment Options */
+.payment-options {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 0.5rem;
+}
+
+.payment-option {
+    background-color: var(--bg-tertiary);
+    border: 2px solid transparent;
+    border-radius: var(--border-radius-md);
+    padding: 0.75rem;
+    cursor: pointer;
+    transition: all var(--transition-fast);
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.25rem;
+}
+
+.payment-option:hover {
+    border-color: var(--border-hover-color);
+    background-color: #383838;
+}
+
+.payment-option.active {
+    border-color: var(--accent-primary);
+    background-color: rgba(212, 175, 55, 0.1);
+}
+
+.payment-option i {
+    font-size: 1.2rem;
+    margin-bottom: 0.25rem;
+}
+
+.payment-option span {
+    font-size: 0.8rem;
+    font-weight: 500;
+}
+
+/* Order Overview */
+.order-overview {
+    margin-bottom: 1rem;
+}
+
+.overview-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.5rem 0;
+    border-bottom: 1px solid var(--border-color);
+    font-size: 0.85rem;
+}
+
+.overview-item:last-child {
+    border-bottom: none;
+}
+
+.overview-item span:first-child {
+    color: var(--text-secondary);
+}
+
+.overview-item span:last-child {
+    color: var(--text-primary);
+    font-weight: 500;
+}
+
+/* Action Buttons */
+.action-buttons {
+    display: flex;
+    gap: 0.5rem;
+    margin-top: auto; /* Pushes to the bottom */
+}
+
+.secondary-btn, .primary-btn {
+    flex: 1;
+    padding: 0.7rem;
+    border-radius: var(--border-radius-sm);
+    font-weight: 600;
+    cursor: pointer;
+    transition: all var(--transition-fast);
+    border: none;
+    font-size: 0.9rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.4rem;
+}
+.secondary-btn {
+    background-color: var(--bg-tertiary);
+    color: var(--text-primary);
+    border: 1px solid var(--border-color);
+}
+.secondary-btn:hover { background-color: #383838; border-color: var(--border-hover-color); }
+.primary-btn { 
+    background: linear-gradient(135deg, var(--accent-primary), var(--accent-secondary)); 
+    color: var(--bg-primary); 
+}
+.primary-btn:hover { 
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(212, 175, 55, 0.3);
+}
+
+/* Scrollbar Styling */
+.customization-panel::-webkit-scrollbar { width: 8px; }
+.customization-panel::-webkit-scrollbar-track { background: var(--bg-secondary); border-radius: 4px; }
+.customization-panel::-webkit-scrollbar-thumb { background: var(--border-color); border-radius: 4px; }
+.customization-panel::-webkit-scrollbar-thumb:hover { background: var(--border-hover-color); }
+
+/* Enhanced responsive design with better mobile optimization */
+/* Responsive Design */
+@media (max-width: 1200px) {
+    .main-container { 
+        grid-template-columns: 1fr 380px; 
+        gap: 1.5rem;
+    }
+    .nav-container { padding: 0 1.5rem; }
+}
+
+@media (max-width: 992px) {
+    .main-container {
+        grid-template-columns: 1fr;
+        margin-top: 1rem;
+        gap: 1.5rem;
+        padding: 0 1.5rem;
+    }
+    .customization-panel {
+        order: 1; /* Panel below viewer on mobile */
+        height: auto; /* Allow panel to grow */
+        max-height: none;
+        margin-top: 0; /* Reset margin on mobile */
+    }
+    .viewer-section { order: 0; }
+    .viewer-wrapper { 
+        min-height: 350px;
+        aspect-ratio: 16 / 9; /* Better mobile aspect ratio */
+    }
+    .nav-links { display: none; /* Basic mobile menu handling, more JS needed for full toggle */ }
+    .mobile-menu-toggle { display: block; }
+    
+    /* Better mobile navigation layout */
+    .nav-container {
+        flex-wrap: wrap;
+        gap: 1rem;
+    }
+    
+    /* Improved progress indicator for tablets */
+    .progress-indicator {
+        padding: 0.75rem;
+    }
+    .progress-step .step-label {
+        font-size: 0.75rem;
+    }
+}
+
+@media (max-width: 768px) {
+    .nav-container { 
+        padding: 0 0.5rem; /* Further reduced padding */
+        flex-wrap: nowrap;
+    }
+    .main-container { 
+        padding: 0 0.5rem; /* Further reduced padding */
+        margin: 0.25rem auto; /* Smaller margin */
+        gap: 0.75rem; /* Reduced gap */
+    }
+    .panel-header h2 { font-size: 1rem; /* Smaller title */ }
+    .customization-section h3 { font-size: 0.8rem; /* Smaller section titles */ }
+    
+    /* Smaller material grid with tighter spacing */
+    .material-grid { 
+        grid-template-columns: repeat(3, 1fr);
+        gap: 0.3rem; /* Reduced gap further */
+    }
+    .material-option {
+        padding: 0.5rem; /* Further reduced padding */
+        min-height: 55px; /* Smaller minimum height */
+    }
+    .material-name {
+        font-size: 0.75rem; /* Smaller text */
+        margin-bottom: 0.1rem;
+    }
+    .price-tag {
+        font-size: 0.7rem;
+    }
+    
+    .style-options { 
+        grid-template-columns: 1fr;
+        gap: 0.3rem; /* Reduced gap */
+    }
+    .payment-options {
+        grid-template-columns: 1fr;
+        gap: 0.3rem; /* Reduced gap */
+    }
+    
+    .form-row {
+        grid-template-columns: 1fr;
+        gap: 0.5rem; /* Reduced gap */
+    }
+    
+    .action-buttons { 
+        flex-direction: column;
+        gap: 0.5rem; /* Reduced button spacing */
+    }
+    .viewer-header h1 { font-size: 1.2rem; /* Smaller main title */ }
+    .viewer-header p { font-size: 0.8rem; /* Smaller subtitle */ }
+    
+    .progress-step .step-label { 
+        display: none; 
+    }
+    .progress-step.active .step-label { 
+        display: block; 
+        font-size: 0.65rem; /* Smaller progress text */
+    }
+    .progress-line { 
+        margin: 0 0.3rem; /* Reduced margin */
+        margin-bottom: calc(0.3rem + 8px); 
+    }
+    
+    /* Smaller teeth selector with compact spacing */
+    .teeth-selector {
+        padding: 0.5rem; /* Further reduced padding */
+        background: rgba(255, 255, 255, 0.03);
+        border-radius: 6px; /* Smaller border radius */
+    }
+    .tooth {
+        width: 24px; /* Smaller touch targets */
+        height: 24px;
+        font-size: 0.65rem; /* Smaller text */
+        border-width: 1px; /* Thinner borders */
+    }
+    .teeth-row {
+        gap: 0.2rem; /* Tighter spacing */
+        margin-bottom: 0.3rem; /* Reduced margin */
+    }
+    
+    /* More compact customization panel */
+    .customization-panel {
+        padding: 0.75rem; /* Further reduced padding */
+    }
+    .customization-section {
+        margin-bottom: 1rem; /* Reduced section spacing */
+    }
+    
+    /* Smaller viewer wrapper */
+    .viewer-wrapper { 
+        min-height: 240px; /* Further reduced height */
+        aspect-ratio: 16 / 9;
+    }
+}
+
+@media (max-width: 480px) {
+    .logo-text { display: none; }
+    .control-btn { 
+        width: 32px; /* Smaller control buttons */
+        height: 32px; 
+        font-size: 0.8rem; 
+    }
+    
+    /* Even smaller teeth selector */
+    .teeth-selector { 
+        padding: 0.4rem; /* Further reduced padding */
+    }
+    .tooth { 
+        width: 22px; /* Smaller teeth buttons */
+        height: 22px; 
+        font-size: 0.6rem; 
+    }
+    .teeth-row {
+        gap: 0.15rem; /* Minimal spacing */
+    }
+    
+    .viewer-wrapper {
+        min-height: 200px; /* Much smaller viewer height */
+        border-radius: 6px;
+    }
+    .customization-panel {
+        border-radius: 6px;
+        padding: 0.6rem; /* Further reduced padding */
+    }
+    
+    /* Smaller material options */
+    .material-option {
+        padding: 0.4rem; /* Further reduced padding */
+        min-height: 45px; /* Smaller minimum height */
+    }
+    .material-name {
+        font-size: 0.7rem; /* Smaller text */
+    }
+    .price-tag {
+        font-size: 0.65rem; /* Smaller price text */
+    }
+    
+    .dashboard-btn {
+        padding: 0.3rem 0.6rem; /* Smaller button padding */
+        font-size: 0.75rem;
+    }
+    .dashboard-btn span {
+        display: inline;
+    }
+    
+    /* Smaller section spacing */
+    .customization-section {
+        margin-bottom: 0.8rem;
+    }
+}
+
+/* Enhanced very small screen optimization */
+@media (max-width: 360px) {
+    .main-container {
+        padding: 0 0.3rem; /* Minimal padding */
+        gap: 0.5rem; /* Tighter gap */
+    }
+    .nav-container {
+        padding: 0 0.3rem; /* Minimal padding */
+    }
+    .viewer-wrapper {
+        min-height: 180px; /* Very compact viewer */
+    }
+    .material-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 0.25rem; /* Minimal gap */
+    }
+    .material-option {
+        padding: 0.3rem; /* Minimal padding */
+        min-height: 40px; /* Very compact height */
+    }
+    .tooth {
+        width: 20px; /* Very small teeth buttons */
+        height: 20px;
+        font-size: 0.55rem; /* Tiny text */
+    }
+    .dashboard-btn span {
+        display: none;
+    }
+    .customization-panel {
+        padding: 0.4rem; /* Minimal panel padding */
+    }
+}
+</style>
+
+<body>
+    <!-- Updated loading screen with luxury spinner structure -->
+    <div class="loading-screen" id="staticLoadingScreen">
+        <div class="loading-content">
+            <div class="loading-spinner">
+                <div class="spinner-ring"></div>
+                <div class="spinner-ring"></div>
+                <div class="spinner-ring"></div>
+                <div class="spinner-center"></div>
+            </div>
+            <h3>Crafting Your Experience</h3>
+            <p>Loading premium grillz studio...</p>
+        </div>
+    </div>
+
+    <!-- Added navbar with dashboard button -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="logo">
+                <i class="fas fa-gem logo-icon"></i>
+                <span class="logo-text">Grillz Studio</span>
+            </div>
+            <a href="/dashboard" class="dashboard-btn">
+                <i class="fas fa-arrow-left"></i>
+                <span>Back to Dashboard</span>
+            </a>
+        </div>
+    </nav>
+
+    <main class="main-container">
+        <div class="viewer-section">
+            <div class="viewer-header">
+                <h1>Design Your Custom Grillz</h1>
+                <p>Visualize your unique style in real-time 3D.</p>
+            </div>
+            <div class="viewer-wrapper">
+                <div class="viewer-container">
+                    <canvas id="threejs-canvas"></canvas>
+                    <div class="viewer-controls">
+                        <button class="control-btn" id="hideUnselected" title="Show only selected teeth">
+                            <i class="fas fa-eye"></i>
+                        </button>
+                        <button class="control-btn" id="resetView" title="Reset View">
+                            <i class="fas fa-sync-alt"></i>
+                        </button>
+                        <button class="control-btn" id="fullscreen" title="Toggle Fullscreen">
+                            <i class="fas fa-expand"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+            <div class="progress-indicator">
+                <div class="progress-step active" data-step="1">
+                    <span class="step-dot"></span>
+                    <span class="step-label">Material & Style</span>
+                </div>
+                <div class="progress-line"></div>
+                <div class="progress-step" data-step="2">
+                    <span class="step-dot"></span>
+                      <span class="step-label">Order Details</span>
+                </div>
+                <div class="progress-line"></div>
+                <div class="progress-step" data-step="3">
+                    <span class="step-dot"></span>
+                    <span class="step-label">Finalize</span>
+                </div>
+            </div>
+        </div>
+
+        <aside class="customization-panel">
+            <div class="panel-header">
+                <h2>Customization Options</h2>
+                <p>Select materials, styles, and fine-tune every detail.</p>
+            </div>
+
+            <!-- Step 1: Material & Style -->
+            <div class="step-content" id="step1" data-step="1">
+                <div class="customization-section" id="section-material-style">
+                    <h3>Material</h3>
+                    <div class="material-grid">
+                        <div class="material-option active" data-material="gold">
+                            <div class="material-preview-wrapper"><span class="material-preview gold"></span></div>
+                            <span class="material-name">Loading...</span>
+                            <span class="price-tag">$---</span>
+                        </div>
+                        <div class="material-option" data-material="silver">
+                            <div class="material-preview-wrapper"><span class="material-preview silver"></span></div>
+                            <span class="material-name">Loading...</span>
+                            <span class="price-tag">$---</span>
+                        </div>
+                        <div class="material-option" data-material="diamond">
+                            <div class="material-preview-wrapper"><span class="material-preview diamond"></span></div>
+                            <span class="material-name">Loading...</span>
+                            <span class="price-tag">$---</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="customization-section" id="section-teeth-color">
+                    <h3>Teeth Selection</h3>
+                    <div class="teeth-selector">
+                        <div class="teeth-row top">
+                            <div class="tooth" data-tooth="1">T1</div> <div class="tooth" data-tooth="2">T2</div> <div class="tooth" data-tooth="3">T3</div> <div class="tooth" data-tooth="4">T4</div> <div class="tooth" data-tooth="5">T5</div> <div class="tooth" data-tooth="6">T6</div> <div class="tooth" data-tooth="7">T7</div> <div class="tooth" data-tooth="8">T8</div>
+                        </div>
+                        <div class="teeth-row bottom">
+                            <div class="tooth" data-tooth="9">B1</div> <div class="tooth" data-tooth="10">B2</div> <div class="tooth" data-tooth="11">B3</div> <div class="tooth" data-tooth="12">B4</div> <div class="tooth" data-tooth="13">B5</div> <div class="tooth" data-tooth="14">B6</div> <div class="tooth" data-tooth="15">B7</div> <div class="tooth" data-tooth="16">B8</div>
+                        </div>
+                    </div>
+                    <div class="teeth-controls">
+                        <button class="teeth-btn" id="clearSelection">Clear</button>
+                    </div>
+                </div>
+
+                <div class="customization-section summary-section">
+                     <h3>Order Summary</h3>
+                     <div class="summary-details">
+                        <p>Material: <span id="summaryMaterial">18K Gold</span></p>
+                        <p>Teeth: <span id="summaryTeethCount">0</span></p>
+                     </div>
+                     <div class="total-price-container">
+                        <span>Total:</span>
+                        <span class="total-price-value">$<span id="totalPrice">0</span></span>
+                     </div>
+                </div>
+            </div>
+
+            <!-- Step 2: Order Details -->
+            <div class="step-content" id="step2" data-step="2" style="display: none;">
+                <div class="customization-section">
+                    <h3>Shipping Address</h3>
+                    <div class="form-group">
+                        <label for="fullName">Full Name</label>
+                        <input type="text" id="fullName" class="form-input" placeholder="Enter your full name" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="address">Address</label>
+                        <input type="text" id="address" class="form-input" placeholder="Street address" required>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="city">City</label>
+                            <input type="text" id="city" class="form-input" placeholder="City" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="zipCode">ZIP Code</label>
+                            <input type="text" id="zipCode" class="form-input" placeholder="ZIP" required>
+                        </div>
+                    </div>
+                    <div class="customization-section">
+                        <h3>Payment Method</h3>
+                        <div class="payment-options">
+                            <div class="payment-option" data-payment="stripe">
+                                <i class="fab fa-stripe"></i>
+                                <span>Stripe</span>
+                            </div>
+                            <div class="payment-option" data-payment="crypto">
+                                <i class="fab fa-bitcoin"></i>
+                                <span>Crypto</span>
+                            </div>
+                            <div class="payment-option" data-payment="cash">
+                                <i class="fas fa-money-bill-wave"></i>
+                                <span>Cash</span>
+                            </div>
+                        </div>
+                        
+                    </div>
+                </div>
+            </div>
+
+            <!-- Step 3: Finalize -->
+            <div class="step-content" id="step3" data-step="3" style="display: none;">
+                <div class="customization-section">
+                    <h3>Order Overview</h3>
+                    <div class="order-overview">
+                        <div class="overview-item">
+                            <span>Material:</span>
+                            <span id="finalMaterial">18K Gold</span>
+                        </div>
+                        <div class="overview-item">
+                            <span>Teeth Count:</span>
+                            <span id="finalTeethCount">0</span>
+                        </div>
+                        <div class="overview-item">
+                            <span>Shipping to:</span>
+                            <span id="finalAddress">-</span>
+                        </div>
+                        <div class="overview-item">
+                            <span>Payment Method:</span>
+                            <span id="finalPayment">Credit Card (Stripe)</span>
+                        </div>
+                    </div>
+                    <div class="total-price-container">
+                        <span>Total:</span>
+                        <span class="total-price-value">$<span id="finalTotalPrice">0</span></span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="action-buttons">
+                <button class="secondary-btn" id="backBtn" style="display: none;">
+                    <i class="fas fa-arrow-left"></i> Back
+                </button>
+                <button class="primary-btn" id="continueBtn">
+                    <i class="fas fa-arrow-right"></i> Continue
+                </button>
+            </div>
+        </aside>
+    </main>
+
+    <!-- Crypto Payment Modal -->
+    <div id="cryptoModal" class="modal-overlay" style="display: none;">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Crypto Payment Instructions</h3>
+                <button class="modal-close" onclick="closeCryptoModal()">&times;</button>
+            </div>
+            <div class="modal-body">
+                <p><strong>To pay with cryptocurrency:</strong></p>
+                <ol>
+                    <li>Send the exact amount to our Bitcoin wallet address:</li>
+                    <li><code>1A1zP1eP5QGefi2DMPTfTL5SLmv7DivfNa</code></li>
+                    <li>Include your order reference in the transaction memo</li>
+                    <li>Send us the transaction ID via email to <strong>payments@grillzstudio.com</strong></li>
+                    <li>We'll process your order once payment is confirmed (usually within 1-3 confirmations)</li>
+                </ol>
+                <div class="note">
+                    <strong>Note:</strong> Cryptocurrency payments may take 10-60 minutes to confirm. We accept Bitcoin, Ethereum, and other major cryptocurrencies.
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="secondary-btn" onclick="closeCryptoModal()">Cancel</button>
+                <button class="primary-btn" onclick="confirmCryptoPayment()">I've Sent Payment</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Cash Payment Modal -->
+    <div id="cashModal" class="modal-overlay" style="display: none;">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Cash Payment Instructions</h3>
+                <button class="modal-close" onclick="closeCashModal()">&times;</button>
+            </div>
+            <div class="modal-body">
+                <p><strong>To pay with cash:</strong></p>
+                <ol>
+                    <li>Visit our studio location during business hours:</li>
+                    <li><strong>Grillz Studio</strong><br>123 Diamond Street<br>Los Angeles, CA 90210</li>
+                    <li>Bring your order reference number: <code id="orderRef">GS-2024-001</code></li>
+                    <li>Pay the exact amount in cash to our staff</li>
+                    <li>We'll begin crafting your custom grillz immediately</li>
+                </ol>
+                <div class="note">
+                    <strong>Business Hours:</strong> Monday-Friday 10AM-7PM, Saturday 10AM-5PM, Sunday Closed. Please call ahead at (555) 123-GOLD to confirm availability.
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="secondary-btn" onclick="closeCashModal()">Cancel</button>
+                <button class="primary-btn" onclick="confirmCashPayment()">Schedule Visit</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://unpkg.com/three@0.132.0/build/three.min.js"></script>
+    <script src="https://unpkg.com/three@0.132.0/examples/js/controls/OrbitControls.js"></script>
+    <script src="https://unpkg.com/three@0.132.0/examples/js/loaders/OBJLoader.js"></script>
+    <script src="https://unpkg.com/three@0.132.0/examples/js/loaders/GLTFLoader.js"></script>
+
+    <script src="/static/js/script.js"></script>
+    <script>window.skipOrder3D=true;</script>
+
+    <script src="/static/js/base.js"></script>
+
+    <script>
+    // Initialize auth header if token exists
+    const token = localStorage.getItem('authToken');
+    if (token) {
+        axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
+    }
+
+    // Initialize the order page
+    if (typeof initializeOrderPage === 'function') {
+        initializeOrderPage();
+    }
+    </script>
+
+      <script>
+        // Spinner control: 4 seconds on /studio, quick on others
+        window.addEventListener('DOMContentLoaded', function(){
+          var spinner = document.getElementById('staticLoadingScreen');
+          var path = window.location.pathname;
+          var spinnerDuration = 4000; // Exactly 4 seconds for luxury experience
+
+          setTimeout(function(){
+            if (!spinner) return;
+            spinner.style.opacity = '0';
+            setTimeout(function(){ spinner.style.display = 'none'; }, 500);
+          }, spinnerDuration);
+        });
+
+        // Global auth management
+        let authToken = localStorage.getItem('authToken');
+        let refreshToken = localStorage.getItem('refreshToken');
+
+        if (authToken) {
+          axios.defaults.headers.common['Authorization'] = 'Bearer ' + authToken;
+        }
+
+        async function redirect(){ window.location.href = '/dashboard'; }
+
+        async function refreshAuthToken() {
+          if (!refreshToken) return false;
+          try {
+            const response = await axios.post('/auth/refresh', { refresh_token: refreshToken });
+            authToken = response.data.access_token;
+            refreshToken = response.data.refresh_token;
+            localStorage.setItem('authToken', authToken);
+            localStorage.setItem('refreshToken', refreshToken);
+            axios.defaults.headers.common['Authorization'] = 'Bearer ' + authToken;
+            return true;
+          } catch (error) {
+            console.log('Token refresh failed:', error);
+            localStorage.removeItem('authToken');
+            localStorage.removeItem('refreshToken');
+            return false;
+          }
+        }
+
+        axios.interceptors.response.use(
+          (response) => response,
+          async (error) => {
+            if (error.response?.status === 401 && refreshToken) {
+              const refreshed = await refreshAuthToken();
+              if (refreshed) {
+                error.config.headers.Authorization = 'Bearer ' + authToken;
+                return axios.request(error.config);
+              }
+            }
+            return Promise.reject(error);
+          }
+        );
+
+        // Payment method selection functionality
+        let selectedPaymentMethod = null;
+
+        // Initialize payment method selection
+        document.addEventListener('DOMContentLoaded', function() {
+            const paymentOptions = document.querySelectorAll('.payment-option');
+            
+            paymentOptions.forEach(option => {
+                option.addEventListener('click', function() {
+                    // Remove active class from all options
+                    paymentOptions.forEach(opt => opt.classList.remove('active'));
+                    
+                    // Add active class to clicked option
+                    this.classList.add('active');
+                    
+                    // Store selected payment method
+                    selectedPaymentMethod = this.dataset.payment;
+                    
+                });
+            });
+        });
+
+        function proceedToPayment() {
+            if (!selectedPaymentMethod) {
+                alert('Please select a payment method');
+                return;
+            }
+            
+            // Validate shipping form
+            const fullName = document.getElementById('fullName').value;
+            const address = document.getElementById('address').value;
+            const city = document.getElementById('city').value;
+            const zipCode = document.getElementById('zipCode').value;
+            
+            if (!fullName || !address || !city || !zipCode) {
+                alert('Please fill in all shipping information');
+                return;
+            }
+            
+            if (selectedPaymentMethod === 'stripe') {
+                // Continue with normal Stripe flow
+                nextStep();
+            } else if (selectedPaymentMethod === 'crypto') {
+                // Show crypto payment modal
+                document.getElementById('cryptoModal').style.display = 'flex';
+            } else if (selectedPaymentMethod === 'cash') {
+                // Show cash payment modal
+                document.getElementById('cashModal').style.display = 'flex';
+            }
+        }
+
+        function closeCryptoModal() {
+            document.getElementById('cryptoModal').style.display = 'none';
+        }
+
+        function closeCashModal() {
+            document.getElementById('cashModal').style.display = 'none';
+        }
+
+        function confirmCryptoPayment() {
+            alert('Thank you! We\'ll process your order once we receive your cryptocurrency payment. You\'ll receive a confirmation email shortly.');
+            closeCryptoModal();
+            // You could redirect to a confirmation page here
+        }
+
+        function confirmCashPayment() {
+            alert('Thank you! Please visit our studio during business hours to complete your payment. We\'ll hold your order for 7 days.');
+            closeCashModal();
+            // You could redirect to a confirmation page here
+        }
+
+        // Close modals when clicking outside
+        document.getElementById('cryptoModal').addEventListener('click', function(e) {
+            if (e.target === this) {
+                closeCryptoModal();
+            }
+        });
+
+        document.getElementById('cashModal').addEventListener('click', function(e) {
+            if (e.target === this) {
+                closeCashModal();
+            }
+        });
+      </script>
+</body>
+</html>
